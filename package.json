@@ -27,7 +27,7 @@
     "test": "mocha --require ./babel-polyfill.js test/**/*.spec.ts",
     "lint": "eslint -c './.eslintrc' --fix './src/**/*.ts'",
     "start": "node ./build",
-    "deploy": "NODE_ENV=production pm2 start ./build --name=bridge"
+    "deploy": "NODE_ENV=production pm2 start ./build --name=bridge-test"
   },
   "repository": {
     "type": "git",
