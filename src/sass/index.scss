@@ -1,0 +1,23 @@
+body {
+  background-color: gray;
+}
+.main {
+  width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  h2 {
+    display: flex;
+    justify-content: center;
+  }
+  .walletconnect {
+    display: flex;
+    justify-content: space-evenly;
+    margin: 50px 20px;
+  }
+  .operation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}

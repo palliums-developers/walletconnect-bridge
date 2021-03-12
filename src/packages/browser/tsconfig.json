@@ -1,0 +1,11 @@
+{
+    // "extends": "../../../tsconfig.json",
+    "include": [
+        "src/*.ts"
+    ],
+    "compilerOptions": {
+        "target": "es5",
+        // "composite": true,
+        // "tsBuildInfoFile": "../../walletConnect/browser"
+    },
+}
