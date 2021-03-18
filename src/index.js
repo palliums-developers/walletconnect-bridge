@@ -3,11 +3,17 @@ import ReactDOM from "react-dom";
 import WalletConnectQRCodeModal from "@walletconnect/qrcode-modal";
 import WalletConnect from "./packages/browser/dist/index";
 import webStorage from "./packages/browser/dist/webStorage";
-import { Button, Input } from "antd";
+import { Button, Input, Select } from "antd";
 import io from "socket.io-client";
+import { socket_url, api_url, tx_config } from "./config";
+import { getViolasTyArgs } from "./util/trans.js";
+import axios from "axios";
 import "./sass/index.scss";
-let url = "http://localhost:3372";
-
+import "antd/dist/antd.css";
+// let socket_url = "http://localhost:3372";
+// let api_url = "https://api4.violas.io";
+const { Option } = Select;
+const { TextArea } = Input;
 class App extends Component {
   constructor(props) {
     super(props);
@@ -18,11 +24,23 @@ class App extends Component {
       num_signature: 0,
       addresses: [],
       signatures: [],
-      tx: {},
+      coinList: [],
+      tx: { receive_address: "", coin_name: "", send_amount: "" },
       warning: "",
     };
   }
+  getCoinName = async () => {
+    await axios
+      .get(api_url + "/1.0/violas/currency")
+      .then((res) => {
+        this.setState({ coinList: res.data.data.currencies });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   componentDidMount = async () => {
+    this.getCoinName();
     let wc_session = JSON.parse(localStorage.getItem("walletconnect"));
     if (wc_session && wc_session.connected) {
       await this.setState({
@@ -97,40 +115,94 @@ class App extends Component {
   onChangeTx = async (type, value) => {
     let temp_tx = this.state.tx;
     switch (type) {
-      case "address":
-        temp_tx.address = value;
+      case "receive_address":
+        temp_tx.receive_address = value;
+        break;
+      case "coin_name":
+        temp_tx.coin_name = value;
+        break;
+      case "send_amount":
+        temp_tx.send_amount = value;
+        break;
+      default:
         break;
     }
   };
-  getToken = async () => {
-    let token = sessionStorage.getItem("express_token");
-    if (token) {
-      token = new Date().getTime();
-    }
+  generateTx = () => {
+    const tx = {
+      from: this.state.walletConnector.accounts,
+      payload: {
+        code: tx_config.p2p,
+        tyArgs: [
+          getViolasTyArgs(this.state.tx.coin_name, this.state.tx.coin_name),
+        ],
+        args: [
+          {
+            type: "Address",
+            value: this.state.tx.receive_address,
+          },
+          {
+            type: "U64",
+            value: this.state.tx.send_amount,
+          },
+          {
+            type: "Vector",
+            value: "",
+          },
+          {
+            type: "Vector",
+            value: "",
+          },
+        ],
+      },
+      chainId: this.state.walletConnector.chainId,
+    };
+    return tx;
   };
   send_address = () => {
     // 连接服务器, 得到与服务器的连接对象
-    // let socket = io(`ws://${url}`);
-    // let socket = io.connect(url);
+    // let socket = io(`ws://${socket_url}`);
+    // let socket = io.connect(socket_url);
     // // 绑定监听, 接收服务器发送的消息
     // socket.on("receiveMsg", function(data) {
     //   console.log("客户端接收服务器发送的消息", data);
     // });
     // // 发送消息
     // socket.emit("sendMsg", { name: "abc" });
-    let rend_data = {
-      token: "111",
+
+    let send_data = {
+      token: this.state.walletConnector.clientId,
+      tx: this.generateTx(),
+      sign_addresses: this.state.addresses,
     };
+    console.log(send_data);
     if (this.state.warning === "") {
-      let socket = io.connect(url);
+      let socket = io.connect(socket_url);
       socket.on("connect", function(data) {
-        socket.emit("join", "Hello World from client");
+        socket.emit("join", send_data);
         socket.on("messages", function(data) {
           console.log(data);
+          this.setState({ signatures: data, num_signature: data.length });
         });
       });
     }
     console.log("send tx to backend");
+  };
+  send_signature = () => {
+    for (let i in this.state.signatures) {
+      let data = {
+        tx: JSON.parse(this.state.signatures[i]).signatures,
+        limit: this.state.num_address,
+      };
+      this.state.walletConnector
+        .violas_multiSignRawTransaction("violas", data)
+        .then((res) => {
+          console.log("Violas transaction ", res);
+        })
+        .catch((err) => {
+          console.log("Violas transaction ", err);
+        });
+    }
   };
   render() {
     return (
@@ -144,22 +216,50 @@ class App extends Component {
         </div>
         {this.state.walletConnector.connected && (
           <div className="operation">
-            <p>Generate transaction</p>
-            <Input></Input>
-            <p>Signature Address:</p>
-            <textarea
-              onChange={this.onChangeAddress}
-              style={{ width: "500px", height: "400px" }}
-              // autoSize={{ minRows: 10, maxRows: 32 }}
-              wrap="hard"
-            />
+            <h2>Generate transaction</h2>
+            <div className="tx">
+              <p>receive address:</p>
+              <Input
+                onChange={(e) => {
+                  this.onChangeTx("receive_address", e.target.value);
+                }}
+              ></Input>
+              <p>coin name:</p>
+              <Select
+                showSearch
+                style={{ width: 200 }}
+                onChange={(e) => this.onChangeTx("coin_name", e)}
+              >
+                {this.state.coinList.length > 0 &&
+                  this.state.coinList.map((v, i) => {
+                    return <Option value={v.module}>{v.module}</Option>;
+                  })}
+              </Select>
+              <p>send amount</p>
+              <Input
+                onChange={(e) => {
+                  this.onChangeTx("send_amount", e.target.value);
+                }}
+              ></Input>
+            </div>
+            <div className="sign_address">
+              <p>Signature Address:</p>
+              <TextArea
+                onChange={this.onChangeAddress}
+                style={{ width: "500px", height: "400px" }}
+                // autoSize={{ minRows: 10, maxRows: 32 }}
+                wrap="hard"
+              />
+            </div>
             <p style={{ color: "red" }}>{this.state.warning}</p>
             <p>Address number: {this.state.num_address}</p>
             <Button type="primary" onClick={this.send_address}>
               Start multi-signature
             </Button>
             <p>Signature number: {this.state.num_signature}</p>
-            <Button type="primary">Send to finance phone</Button>
+            <Button type="primary" onClick={this.send_signature}>
+              Send to finance phone
+            </Button>
           </div>
         )}
       </div>
