@@ -8,6 +8,7 @@ app.all("*", function(req, res, next) {
   res.header("Content-Type", "application/json;charset=utf-8");
   next();
 });
+
 let server = require("http").createServer(app);
 let io = require("socket.io")(server, {
   cors: true,
@@ -87,6 +88,7 @@ app.post("/signed_tx", urlencodedParser, function(req, res) {
 io.on("connection", function(_client) {
   console.log("Client connected...");
   _client.on("join", function(data) {
+    console.log(data.token);
     save2redis(data);
     let intervalMonitor = setInterval(function() {
       let load_signature = client.lrange(
@@ -97,6 +99,7 @@ io.on("connection", function(_client) {
           if (err) {
             console.log(err);
           } else {
+            // console.log(_data.length)
             if (_data.length === data.sign_addresses.length) {
               console.log("get all signature ", _data);
               _client.emit("messages", _data);
@@ -112,9 +115,9 @@ io.on("connection", function(_client) {
   setTimeout(() => _client.disconnect(true), 10 * 60 * 1000);
   _client.on("disconnect", function() {
     console.log("user disconnected");
-    client.del(data.token + "_tx");
-    client.del(data.token + "_signer");
-    client.del(data.token + "_signature");
+    // client.del(data && data.token + "_tx");
+    // client.del(data && data.token + "_signer");
+    // client.del(data && data.token + "_signature");
     _client.emit("messages", "Timeout");
   });
 });

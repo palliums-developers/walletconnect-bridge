@@ -48,13 +48,13 @@
     "isomorphic-fetch": "2.2.1",
     "mocha": "5.2.0",
     "ts-loader": "5.4.5",
-    "typescript": "3.7.5",
+    "typescript": "^4.2.3",
     "webpack": "4.41.5",
     "webpack-cli": "3.3.10"
   },
   "dependencies": {
-    "@walletconnect/types": "^1.0.0-beta.47",
-    "@walletconnect/utils": "^1.0.0-beta.47"
+    "@walletconnect/types": "1.0.0-beta.47",
+    "@walletconnect/utils": "1.0.0-beta.47"
   },
   "gitHead": "165f7993c2acc907c653c02847fb02721052c6e7"
 }

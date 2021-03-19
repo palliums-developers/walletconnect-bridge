@@ -578,12 +578,40 @@ var Connector = /** @class */ (function () {
             });
         });
     };
+    Connector.prototype.violas_multiSignRawTransaction = function (tx) {
+        return __awaiter(this, void 0, void 0, function () {
+            var request, result, error_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!this._connected) {
+                            throw new Error(errors_1.ERROR_SESSION_DISCONNECTED);
+                        }
+                        request = this._formatRequest({
+                            method: 'violas_multiSignRawTransaction',
+                            params: [tx]
+                        });
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, this._sendCallRequest(request)];
+                    case 2:
+                        result = _a.sent();
+                        return [2 /*return*/, result];
+                    case 3:
+                        error_2 = _a.sent();
+                        throw error_2;
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
     Connector.prototype.consoleLog = function (_temp) {
         return _temp;
     };
     Connector.prototype.get_accounts = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var request, result, error_2;
+            var request, result, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -605,8 +633,8 @@ var Connector = /** @class */ (function () {
                         // const result = await this._get_accounts(request)
                         return [2 /*return*/, result];
                     case 3:
-                        error_2 = _a.sent();
-                        throw error_2;
+                        error_3 = _a.sent();
+                        throw error_3;
                     case 4:
                         ;
                         return [2 /*return*/];
@@ -632,7 +660,7 @@ var Connector = /** @class */ (function () {
     // }
     Connector.prototype.signTransaction = function (tx) {
         return __awaiter(this, void 0, void 0, function () {
-            var request, result, error_3;
+            var request, result, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -651,8 +679,8 @@ var Connector = /** @class */ (function () {
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
-                        error_3 = _a.sent();
-                        throw error_3;
+                        error_4 = _a.sent();
+                        throw error_4;
                     case 4: return [2 /*return*/];
                 }
             });
@@ -660,7 +688,7 @@ var Connector = /** @class */ (function () {
     };
     Connector.prototype.signMessage = function (params) {
         return __awaiter(this, void 0, void 0, function () {
-            var request, result, error_4;
+            var request, result, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -679,8 +707,8 @@ var Connector = /** @class */ (function () {
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
-                        error_4 = _a.sent();
-                        throw error_4;
+                        error_5 = _a.sent();
+                        throw error_5;
                     case 4: return [2 /*return*/];
                 }
             });
@@ -688,7 +716,7 @@ var Connector = /** @class */ (function () {
     };
     Connector.prototype.signPersonalMessage = function (params) {
         return __awaiter(this, void 0, void 0, function () {
-            var request, result, error_5;
+            var request, result, error_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -708,8 +736,8 @@ var Connector = /** @class */ (function () {
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
-                        error_5 = _a.sent();
-                        throw error_5;
+                        error_6 = _a.sent();
+                        throw error_6;
                     case 4: return [2 /*return*/];
                 }
             });
@@ -717,7 +745,7 @@ var Connector = /** @class */ (function () {
     };
     Connector.prototype.signTypedData = function (params) {
         return __awaiter(this, void 0, void 0, function () {
-            var request, result, error_6;
+            var request, result, error_7;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -736,8 +764,8 @@ var Connector = /** @class */ (function () {
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
-                        error_6 = _a.sent();
-                        throw error_6;
+                        error_7 = _a.sent();
+                        throw error_7;
                     case 4: return [2 /*return*/];
                 }
             });
@@ -745,7 +773,7 @@ var Connector = /** @class */ (function () {
     };
     Connector.prototype.updateChain = function (chainParams) {
         return __awaiter(this, void 0, void 0, function () {
-            var request, result, error_7;
+            var request, result, error_8;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -764,8 +792,8 @@ var Connector = /** @class */ (function () {
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
-                        error_7 = _a.sent();
-                        throw error_7;
+                        error_8 = _a.sent();
+                        throw error_8;
                     case 4: return [2 /*return*/];
                 }
             });
@@ -789,7 +817,7 @@ var Connector = /** @class */ (function () {
     };
     Connector.prototype.sendCustomRequest = function (request, options) {
         return __awaiter(this, void 0, void 0, function () {
-            var formattedRequest, result, error_8;
+            var formattedRequest, result, error_9;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -824,8 +852,8 @@ var Connector = /** @class */ (function () {
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
-                        error_8 = _a.sent();
-                        throw error_8;
+                        error_9 = _a.sent();
+                        throw error_9;
                     case 4: return [2 /*return*/];
                 }
             });

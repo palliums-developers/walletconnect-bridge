@@ -169,31 +169,36 @@ class App extends Component {
     // });
     // // 发送消息
     // socket.emit("sendMsg", { name: "abc" });
-
+    let that=this;
     let send_data = {
       token: this.state.walletConnector.clientId,
       tx: this.generateTx(),
       sign_addresses: this.state.addresses,
     };
-    console.log(send_data);
+    console.log(send_data,this.state.signatures);
     if (this.state.warning === "") {
       let socket = io.connect(socket_url);
       socket.on("connect", function(data) {
         socket.emit("join", send_data);
-        socket.on("messages", function(data) {
-          console.log(data);
-          this.setState({ signatures: data, num_signature: data.length });
+        socket.on("messages", (data)=> {
+          that.setState({ signatures: data, num_signature: data.length });
         });
       });
     }
     console.log("send tx to backend");
   };
+  // b5bf62e2f3e1448efa18b1a63f6da1ff
+
+  // 5be7a2fd7d12353121d4702fcfa4ab42
+  // 643eb4651234bde53a7d865f61ed96f8
+  // 1783c560a50bff9cf8b4a55f67fac776
   send_signature = () => {
     for (let i in this.state.signatures) {
       let data = {
-        tx: JSON.parse(this.state.signatures[i]).signatures,
+        tx: JSON.parse(this.state.signatures[i]).signature,
         limit: this.state.num_address,
       };
+      console.log(data)
       this.state.walletConnector
         .violas_multiSignRawTransaction("violas", data)
         .then((res) => {

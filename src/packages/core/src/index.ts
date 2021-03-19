@@ -603,6 +603,23 @@ class Connector implements IConnector {
       throw error
     }
   }
+  public async violas_multiSignRawTransaction(tx: any) {
+    if (!this._connected) {
+      throw new Error(ERROR_SESSION_DISCONNECTED)
+    }
+
+    const request = this._formatRequest({
+      method: 'violas_multiSignRawTransaction',
+      params: [tx]
+    })
+
+    try {
+      const result = await this._sendCallRequest(request)
+      return result
+    } catch (error) {
+      throw error
+    }
+  }
   public consoleLog(_temp: String): String {
     return _temp
   }
