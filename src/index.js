@@ -96,7 +96,7 @@ class App extends Component {
     await sessionStorage.clear();
   };
   getAccount = () => {
-    this.state.walletConnector.get_accounts().then(async (res) => {
+    this.state.walletConnector.get_accounts().then((res) => {
       console.log("get account ", res);
     });
   };
@@ -169,18 +169,18 @@ class App extends Component {
     // });
     // // 发送消息
     // socket.emit("sendMsg", { name: "abc" });
-    let that=this;
+    let that = this;
     let send_data = {
       token: this.state.walletConnector.clientId,
       tx: this.generateTx(),
       sign_addresses: this.state.addresses,
     };
-    console.log(send_data,this.state.signatures);
+    console.log(send_data, this.state.signatures);
     if (this.state.warning === "") {
       let socket = io.connect(socket_url);
       socket.on("connect", function(data) {
         socket.emit("join", send_data);
-        socket.on("messages", (data)=> {
+        socket.on("messages", (data) => {
           that.setState({ signatures: data, num_signature: data.length });
         });
       });
@@ -198,9 +198,9 @@ class App extends Component {
         tx: JSON.parse(this.state.signatures[i]).signature,
         limit: this.state.num_address,
       };
-      console.log(data)
+      console.log(data);
       this.state.walletConnector
-        .violas_multiSignRawTransaction("violas", data)
+        .violas_multiSignRawTransaction(data)
         .then((res) => {
           console.log("Violas transaction ", res);
         })
@@ -209,12 +209,30 @@ class App extends Component {
         });
     }
   };
+  test_wc_multi = () => {
+    let data = {
+      tx: "testTxData",
+      limit: 666,
+    };
+    console.log("testing multi: ", data);
+    this.state.walletConnector
+      .violas_multiSignRawTransaction(data)
+      .then((res) => {
+        console.log("multi success: ", res);
+      })
+      .catch((err) => {
+        console.log("multi failed: ", err);
+      });
+  };
   render() {
     return (
       <div className="main">
         <h2>Multi-sign WalletConnect Demo</h2>
         <div className="walletconnect">
           <Button onClick={this.QRCode}>Link to WalletConnect</Button>
+          <Button onClick={this.test_wc_multi}>
+            Test violas_multiSignRawTransaction
+          </Button>
           <Button onClick={this.disconnectWC}>
             Disconnect with WalletConnect
           </Button>

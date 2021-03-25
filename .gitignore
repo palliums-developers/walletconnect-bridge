@@ -1,7 +1,6 @@
 # dependencies
 /node_modules
 /src/packages/core/node_modules
-/src/packages/core/node_modules
 
 # testing
 /coverage
